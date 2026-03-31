@@ -1,0 +1,21 @@
+# .gitignore
+
+node_modules/
+.env
+*.log
+*.tmp
+*.bak
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# VS Code
+
+.vscode/
+
+# PostgreSQL dumps / backups
+
+*.sql.dump
+*.backup
