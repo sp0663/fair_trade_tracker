@@ -30,3 +30,7 @@ Run the setup script to initialize the database:
 * `seed/` → sample data
 * `setup/` → full DB initialization
 * `docs/` → design documentation
+
+## Collaborators
+* Rushil Jain
+* Shresh Parti
