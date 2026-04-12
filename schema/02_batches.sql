@@ -1,4 +1,4 @@
--- This file defines the "batches" table, which represents individual batches of products in the supply chain
+-- This table represents individual batches of products in the supply chain
 
 CREATE TABLE batches (
     id SERIAL PRIMARY KEY,

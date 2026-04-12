@@ -4,10 +4,10 @@ CREATE OR REPLACE FUNCTION check_certification()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM stakeholders
-        WHERE id = NEW.current_owner_id
-          AND certification_status = TRUE
-          AND (certification_expiry IS NULL OR certification_expiry > CURRENT_DATE)
+        SELECT 1 FROM certifications
+        WHERE stakeholder_id = NEW.current_owner_id
+        AND is_active = TRUE
+        AND (expiry_date IS NULL OR expiry_date > CURRENT_DATE)
     ) THEN
         RAISE EXCEPTION 'Stakeholder is not certified or certification expired';
     END IF;

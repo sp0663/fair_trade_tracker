@@ -1,4 +1,4 @@
--- This file defines the "audit_log" table, which records all significant actions taken on batches, such as creation, updates, and transfers
+-- This table records all significant actions taken on batches, such as creation, updates, and transfers
 
 CREATE TABLE audit_log (
     id SERIAL PRIMARY KEY,
