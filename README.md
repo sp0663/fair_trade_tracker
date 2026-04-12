@@ -30,8 +30,6 @@ psql -U <username> -d <database_name> -f setup/setup.sql
 2. Open the file `setup/setup.sql`
 3. Click **Run**
 
----
-
 ## Seed Data
 
 After setup, populate the database with sample data:
