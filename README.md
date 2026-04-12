@@ -16,11 +16,38 @@ A relational database system designed to ensure end-to-end transparency and ethi
 
 ## Setup
 
-Run the setup script to initialize the database:
+Initialize the database by running the setup script.
 
-```sql
-\i setup/setup.sql
+### Using psql
+
 ```
+psql -U <username> -d <database_name> -f setup/setup.sql
+```
+
+### Using pgAdmin
+
+1. Open the Query Tool for your database
+2. Open the file `setup/setup.sql`
+3. Click **Run**
+
+---
+
+## Seed Data
+
+After setup, populate the database with sample data:
+
+### Using psql
+
+```
+psql -U <username> -d <database_name> -f setup/seed.sql
+```
+
+### Using pgAdmin
+
+1. Open the Query Tool
+2. Open the file `setup/seed.sql`
+3. Click **Run**
+
 
 ## Structure
 
