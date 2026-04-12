@@ -20,7 +20,7 @@ Initialize the database by running the setup script.
 
 ### Using psql
 
-```
+```bash
 psql -U <username> -d <database_name> -f setup/setup.sql
 ```
 
@@ -38,7 +38,7 @@ After setup, populate the database with sample data:
 
 ### Using psql
 
-```
+```bash
 psql -U <username> -d <database_name> -f setup/seed.sql
 ```
 
@@ -56,7 +56,7 @@ psql -U <username> -d <database_name> -f setup/seed.sql
 * `queries/` → lineage + analysis queries
 * `seed/` → sample data
 * `setup/` → full DB initialization
-* `docs/` → design documentation
+* `visualise/` → design visualization
 
 ## Collaborators
 * Rushil Jain
