@@ -8,8 +8,6 @@ A relational database system designed to ensure end-to-end transparency and ethi
 * Certification validation on both INSERT and transfer (UPDATE) via database triggers
 * Immutable audit logging for every `created` / `updated` / `transferred` event
 * Compliance view distinguishing COMPLIANT / EXPIRED / REVOKED / NO CERTIFICATION
-* Python report generator that produces a styled HTML run-report
-
 ## Tech Stack
 
 * PostgreSQL 16
@@ -24,7 +22,7 @@ triggers/    individual trigger files (read-only reference; also inlined in setu
 queries/     views.sql, procedures.sql, sample recursive queries, test_queries.sql
 seed/        seed_data.sql — 18 stakeholders, 17 certs, 24 batches, 24 DAG edges
 setup/       setup.sql — ONE-SHOT bootstrap that creates everything
-visualise/   visualise_db.py, er_diagram generator, generated PNGs
+visualise/   visualise_db.py, generated PNGs
 ```
 
 ## Quick start
@@ -47,23 +45,13 @@ visualise/   visualise_db.py, er_diagram generator, generated PNGs
    psql -U postgres -d fair_trade_tracker -f seed/seed_data.sql
    ```
 
-4. Generate the HTML run-report:
-
-   ```bash
-   pip install -r requirements.txt
-   python generate_report.py          # writes report.html
-   ```
-
-   Optional: `python generate_pdf_report.py` writes `Fair_Trade_Tracker_Report.pdf`.
-
 ### Using pgAdmin instead of psql
 
 Open the Query Tool and run `setup/setup.sql` followed by `seed/seed_data.sql`.
 
-### Regenerating the diagrams
+### Regenerating the supply chain graph
 
 ```bash
-python visualise/generate_er_diagram.py      # -> visualise/er_diagram.png
 python visualise/visualise_db.py             # -> visualise/supply_chain_graph.png
 ```
 
