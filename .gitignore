@@ -24,3 +24,8 @@ Thumbs.db
 venv/
 
 .dot.claude/
+generate_pdf_report.py
+generate_report.py
+Fair_Trade_Tracker_Report.pdf
+report.html
+visualise/generate_er_diagram.py
