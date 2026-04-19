@@ -2,32 +2,32 @@ BEGIN;
 
 -- Stakeholders
 
-INSERT INTO stakeholders (id, name, role, certification_status, certification_expiry) VALUES
+INSERT INTO stakeholders (id, name, role) VALUES
 
 -- COFFEE CHAIN
-(1, 'Green Valley Farm', 'farmer', TRUE, '2030-01-01'),
-(2, 'Hilltop Coffee Farm', 'farmer', TRUE, '2030-01-01'),
-(3, 'Coffee Processors Ltd', 'processor', TRUE, '2030-01-01'),
-(4, 'Global Coffee Distributors', 'distributor', TRUE, '2030-01-01'),
-(5, 'City Coffee Retail', 'retailer', TRUE, '2030-01-01'),
+(1, 'Green Valley Farm', 'farmer'),
+(2, 'Hilltop Coffee Farm', 'farmer'),
+(3, 'Coffee Processors Ltd', 'processor'),
+(4, 'Global Coffee Distributors', 'distributor'),
+(5, 'City Coffee Retail', 'retailer'),
 
 -- COCOA CHAIN
-(6, 'Cocoa Farms West', 'farmer', TRUE, '2030-01-01'),
-(7, 'Rainforest Cocoa Ltd', 'farmer', TRUE, '2030-01-01'),
-(8, 'Cocoa Processing Hub', 'processor', TRUE, '2030-01-01'),
-(9, 'Chocolate Distributors Inc', 'distributor', TRUE, '2030-01-01'),
-(10, 'Sweet Retail Store', 'retailer', TRUE, '2030-01-01'),
+(6, 'Cocoa Farms West', 'farmer'),
+(7, 'Rainforest Cocoa Ltd', 'farmer'),
+(8, 'Cocoa Processing Hub', 'processor'),
+(9, 'Chocolate Distributors Inc', 'distributor'),
+(10, 'Sweet Retail Store', 'retailer'),
 
 -- COTTON CHAIN
-(11, 'Cotton Growers Union', 'farmer', TRUE, '2030-01-01'),
-(12, 'Organic Cotton Farm', 'farmer', TRUE, '2030-01-01'),
-(13, 'Textile Processing Ltd', 'processor', TRUE, '2030-01-01'),
-(14, 'Fabric Distributors', 'distributor', TRUE, '2030-01-01'),
-(15, 'Clothing Retail Hub', 'retailer', TRUE, '2030-01-01'),
+(11, 'Cotton Growers Union', 'farmer'),
+(12, 'Organic Cotton Farm', 'farmer'),
+(13, 'Textile Processing Ltd', 'processor'),
+(14, 'Fabric Distributors', 'distributor'),
+(15, 'Clothing Retail Hub', 'retailer'),
 
 -- EDGE CASES (kept for demo, not used in batches)
-(16, 'Expired Farm', 'farmer', TRUE, '2020-01-01'),
-(17, 'Uncertified Retailer', 'retailer', FALSE, NULL);
+(16, 'Expired Farm', 'farmer'),
+(17, 'Uncertified Retailer', 'retailer');
 
 
 -- Certifications

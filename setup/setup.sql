@@ -12,8 +12,6 @@ CREATE TABLE stakeholders (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('farmer', 'processor', 'distributor', 'retailer')),
-    certification_status BOOLEAN NOT NULL DEFAULT FALSE,
-    certification_expiry DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -53,6 +51,24 @@ CREATE TABLE audit_log (
     actor_id INT NOT NULL REFERENCES stakeholders(id),
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create View
+CREATE OR REPLACE VIEW v_batch_details AS
+SELECT b.id AS batch_id,
+       b.product_name,
+       b.quantity,
+       b.unit,
+       s.name AS owner_name,
+       s.role AS owner_role,
+       (EXISTS (
+           SELECT 1 FROM certifications c 
+           WHERE c.stakeholder_id = s.id 
+             AND c.is_active = TRUE 
+             AND (c.expiry_date IS NULL OR c.expiry_date > CURRENT_DATE)
+       )) AS certification_status,
+       b.created_at
+FROM batches b
+JOIN stakeholders s ON b.current_owner_id = s.id;
 
 -- Certification Trigger
 CREATE OR REPLACE FUNCTION check_certification()
