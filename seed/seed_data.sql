@@ -26,8 +26,9 @@ INSERT INTO stakeholders (id, name, role) VALUES
 (15, 'Clothing Retail Hub', 'retailer'),
 
 -- EDGE CASES (kept for demo, not used in batches)
-(16, 'Expired Farm', 'farmer'),
-(17, 'Uncertified Retailer', 'retailer');
+(16, 'Expired Farm', 'farmer'),               -- will receive an EXPIRED certification
+(17, 'Uncertified Retailer', 'retailer'),     -- no certification at all
+(18, 'Revoked Distributor', 'distributor');   -- will receive a REVOKED (is_active=FALSE) certification
 
 
 -- Certifications
@@ -53,7 +54,11 @@ INSERT INTO certifications (stakeholder_id, certifying_body, issue_date, expiry_
 (12, 'Eco Cert', '2025-01-01', '2030-01-01', TRUE),
 (13, 'Textile Cert', '2025-01-01', '2030-01-01', TRUE),
 (14, 'Distribution Cert', '2025-01-01', '2030-01-01', TRUE),
-(15, 'Retail Cert', '2025-01-01', '2030-01-01', TRUE);
+(15, 'Retail Cert', '2025-01-01', '2030-01-01', TRUE),
+
+-- EDGE CASE CERTS
+(16, 'FairTrade',    '2018-01-01', '2020-01-01', TRUE),    -- EXPIRED certification
+(18, 'Export Cert',  '2025-01-01', '2030-01-01', FALSE);   -- REVOKED (is_active = FALSE)
 
 
 -- Batches
@@ -114,5 +119,9 @@ INSERT INTO batch_relations VALUES
 (301, 304),
 (302, 305), (303, 305), (304, 305),
 (305, 306), (305, 307);
+
+-- Synchronize the serial sequences with the explicitly inserted IDs
+SELECT setval('stakeholders_id_seq', (SELECT MAX(id) FROM stakeholders));
+SELECT setval('batches_id_seq',      (SELECT MAX(id) FROM batches));
 
 COMMIT;

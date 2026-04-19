@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fair Trade Supply Chain Tracker — Database Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 40px 60px;
+    line-height: 1.6;
+  }
+  .report-header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 40px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 16px;
+  }
+  .report-header h1 {
+    font-size: 2.2em;
+    background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .report-header .subtitle {
+    color: #94a3b8;
+    font-size: 1em;
+  }
+  .report-header .meta {
+    color: #64748b;
+    font-size: 0.85em;
+    margin-top: 12px;
+  }
+  .scenario {
+    margin-bottom: 40px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .scenario-header {
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #1e3a5f, #1e293b);
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .scenario-num {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85em;
+    flex-shrink: 0;
+  }
+  .scenario-header h2 {
+    font-size: 1.15em;
+    color: #f1f5f9;
+  }
+  .scenario-body { padding: 20px 24px; }
+  .scenario-desc {
+    color: #94a3b8;
+    font-size: 0.9em;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: #0f172a;
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 8px 8px 0;
+  }
+  .query-block {
+    margin-bottom: 20px;
+  }
+  .query-label {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+  .query-sql {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.82em;
+    color: #7dd3fc;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin-bottom: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    margin-bottom: 6px;
+  }
+  thead th {
+    background: #334155;
+    color: #e2e8f0;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #475569;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #1e293b;
+    color: #cbd5e1;
+  }
+  tbody tr:nth-child(even) { background: #1a2536; }
+  tbody tr:hover { background: #253347; }
+  .row-count {
+    text-align: right;
+    color: #64748b;
+    font-size: 0.8em;
+    margin-top: 4px;
+  }
+  .error-box {
+    background: #2d1b1b;
+    border: 1px solid #7f1d1d;
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: #fca5a5;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    margin-bottom: 14px;
+  }
+  .success-box {
+    background: #1a2e1a;
+    border: 1px solid #166534;
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: #86efac;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    margin-bottom: 14px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+  .tag-pass { background: #166534; color: #86efac; }
+  .tag-fail { background: #7f1d1d; color: #fca5a5; }
+  .toc {
+    margin-bottom: 40px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 24px 30px;
+  }
+  .toc h3 { color: #f1f5f9; margin-bottom: 14px; }
+  .toc-list { list-style: none; }
+  .toc-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #24334a;
+  }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    color: #7dd3fc;
+    text-decoration: none;
+    font-size: 0.9em;
+  }
+  .toc-list a:hover { color: #bae6fd; }
+  .images-section { text-align: center; margin: 20px 0; }
+  .images-section img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    margin: 10px 0;
+  }
+  .img-caption {
+    color: #64748b;
+    font-size: 0.8em;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+  @media print {
+    body { background: white; color: #1e293b; padding: 20px; }
+    .scenario { border-color: #d1d5db; page-break-inside: avoid; }
+    .scenario-header { background: #f1f5f9; }
+    .scenario-num { background: #3b82f6; }
+    thead th { background: #e5e7eb; color: #1e293b; }
+    tbody td { color: #374151; border-color: #e5e7eb; }
+    .query-sql { background: #f8fafc; color: #1e40af; border-color: #d1d5db; }
+  }
+</style>
+</head>
+<body>
+
+    <div class="report-header">
+        <h1>Fair Trade Supply Chain Tracker</h1>
+        <div class="subtitle">Comprehensive Database Output Report</div>
+        <div class="meta">CS251M — Database Systems Project &nbsp;|&nbsp; Generated: April 19, 2026 at 02:59 PM</div>
+        <div class="meta">Rushil Jain (241EC148) &nbsp;&bull;&nbsp; Shresh Parti (241EC252)</div>
+    </div>
+    <div class="toc"><h3>Table of Contents</h3><ol class="toc-list"><li><a href="#scenario-1">1. Schema Overview — Tables, Triggers, Views, Functions</a></li><li><a href="#scenario-2">2. Stakeholders & Certifications Data</a></li><li><a href="#scenario-3">3. All Product Batches with Owner Details</a></li><li><a href="#scenario-4">4. Supply Chain Relationships (Batch Relations)</a></li><li><a href="#scenario-5">5. Backward Lineage Tracing — Coffee Retail to Origin</a></li><li><a href="#scenario-6">6. Forward Tracing — Impact Analysis from Raw Material</a></li><li><a href="#scenario-7">7. Certification Trigger — Blocking Uncertified Stakeholder</a></li><li><a href="#scenario-8">8. Certification Trigger — Blocking Expired Certification</a></li><li><a href="#scenario-9">9. Certification Trigger — Blocking Revoked Certification</a></li><li><a href="#scenario-10">10. Transfer Trigger — Blocking Transfer to Uncertified Owner</a></li><li><a href="#scenario-11">11. Batch Transfer with Automatic Audit Logging</a></li><li><a href="#scenario-12">12. Audit Log Immutability — Tamper-Proof Verification</a></li><li><a href="#scenario-13">13. Views — Compliance Overview (all four states)</a></li><li><a href="#scenario-14">14. Views — Supply Chain Summary</a></li><li><a href="#scenario-15">15. Views — Final Retail Products & Raw Materials</a></li><li><a href="#scenario-16">16. Stored Function — get_backward_lineage()</a></li><li><a href="#scenario-17">17. Stored Function — get_forward_trace()</a></li><li><a href="#scenario-18">18. Stored Function — get_compliance_report()</a></li><li><a href="#scenario-19">19. Analytical Queries — Aggregates & Statistics</a></li><li><a href="#scenario-20">20. ER Diagram & Supply Chain Visualization</a></li></ol></div><div class="scenario" id="scenario-1"><div class="scenario-header"><div class="scenario-num">1</div><h2>Schema Overview — Tables, Triggers, Views, Functions</h2></div><div class="scenario-body"><div class="scenario-desc">Overview of all database objects created by <code>setup/setup.sql</code> — 5 tables, 5 triggers, 6 views, and 4 stored functions.</div><div class="query-block"><div class="query-label">Tables</div><div class="query-sql">SELECT table_name FROM information_schema.tables WHERE table_schema = &#x27;public&#x27; AND table_type = &#x27;BASE TABLE&#x27; ORDER BY table_name;</div><table><thead><tr><th>table_name</th></tr></thead><tbody><tr><td>audit_log</td></tr><tr><td>batch_relations</td></tr><tr><td>batches</td></tr><tr><td>certifications</td></tr><tr><td>stakeholders</td></tr></tbody></table><div class="row-count">(5 rows)</div></div><div class="query-block"><div class="query-label">Triggers</div><div class="query-sql">SELECT trigger_name, event_manipulation, event_object_table, action_timing FROM information_schema.triggers WHERE trigger_schema = &#x27;public&#x27; ORDER BY event_object_table, action_timing;</div><table><thead><tr><th>trigger_name</th><th>event_manipulation</th><th>event_object_table</th><th>action_timing</th></tr></thead><tbody><tr><td>audit_immutability_trigger</td><td>DELETE</td><td>audit_log</td><td>BEFORE</td></tr><tr><td>audit_immutability_trigger</td><td>UPDATE</td><td>audit_log</td><td>BEFORE</td></tr><tr><td>audit_insert_trigger</td><td>INSERT</td><td>batches</td><td>AFTER</td></tr><tr><td>audit_update_trigger</td><td>UPDATE</td><td>batches</td><td>AFTER</td></tr><tr><td>certification_trigger</td><td>INSERT</td><td>batches</td><td>BEFORE</td></tr><tr><td>transfer_certification_trigger</td><td>UPDATE</td><td>batches</td><td>BEFORE</td></tr></tbody></table><div class="row-count">(6 rows)</div></div><div class="query-block"><div class="query-label">Views</div><div class="query-sql">SELECT table_name AS view_name FROM information_schema.views WHERE table_schema = &#x27;public&#x27; ORDER BY table_name;</div><table><thead><tr><th>view_name</th></tr></thead><tbody><tr><td>v_audit_trail</td></tr><tr><td>v_batch_details</td></tr><tr><td>v_compliance_overview</td></tr><tr><td>v_final_products</td></tr><tr><td>v_raw_materials</td></tr><tr><td>v_supply_chain_summary</td></tr></tbody></table><div class="row-count">(6 rows)</div></div><div class="query-block"><div class="query-label">Stored Functions (non-trigger)</div><div class="query-sql">SELECT routine_name
+FROM information_schema.routines
+WHERE routine_schema = &#x27;public&#x27; AND routine_type = &#x27;FUNCTION&#x27;
+  AND routine_name NOT IN (
+      &#x27;check_certification&#x27;,&#x27;check_transfer_certification&#x27;,
+      &#x27;log_batch_insert&#x27;,&#x27;log_batch_update&#x27;,&#x27;prevent_audit_modification&#x27;
+  )
+ORDER BY routine_name;</div><table><thead><tr><th>routine_name</th></tr></thead><tbody><tr><td>get_backward_lineage</td></tr><tr><td>get_compliance_report</td></tr><tr><td>get_forward_trace</td></tr><tr><td>transfer_batch</td></tr></tbody></table><div class="row-count">(4 rows)</div></div></div></div><div class="scenario" id="scenario-2"><div class="scenario-header"><div class="scenario-num">2</div><h2>Stakeholders &amp; Certifications Data</h2></div><div class="scenario-body"><div class="scenario-desc">18 stakeholders across 3 supply chains (Coffee, Cocoa, Cotton) plus 3 edge-case stakeholders — one with an <strong>expired</strong> certification (id=16), one with <strong>no</strong> certification (id=17), and one with a <strong>revoked</strong> certification (id=18). Certification state lives entirely in the <code>certifications</code> table; <code>stakeholders</code> is fully normalized.</div><div class="query-block"><div class="query-label">All Stakeholders</div><div class="query-sql">SELECT id, name, role, created_at FROM stakeholders ORDER BY id;</div><table><thead><tr><th>id</th><th>name</th><th>role</th><th>created_at</th></tr></thead><tbody><tr><td>1</td><td>Green Valley Farm</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>2</td><td>Hilltop Coffee Farm</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>3</td><td>Coffee Processors Ltd</td><td>processor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>4</td><td>Global Coffee Distributors</td><td>distributor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>5</td><td>City Coffee Retail</td><td>retailer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>6</td><td>Cocoa Farms West</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>7</td><td>Rainforest Cocoa Ltd</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>8</td><td>Cocoa Processing Hub</td><td>processor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>9</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>10</td><td>Sweet Retail Store</td><td>retailer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>11</td><td>Cotton Growers Union</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>12</td><td>Organic Cotton Farm</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>13</td><td>Textile Processing Ltd</td><td>processor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>14</td><td>Fabric Distributors</td><td>distributor</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>15</td><td>Clothing Retail Hub</td><td>retailer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>16</td><td>Expired Farm</td><td>farmer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>17</td><td>Uncertified Retailer</td><td>retailer</td><td>2026-04-19 14:54:47.986876</td></tr><tr><td>18</td><td>Revoked Distributor</td><td>distributor</td><td>2026-04-19 14:54:47.986876</td></tr></tbody></table><div class="row-count">(18 rows)</div></div><div class="query-block"><div class="query-label">Stakeholders joined with their certification rows (LEFT JOIN)</div><div class="query-sql">SELECT s.id, s.name, s.role, c.certifying_body, c.issue_date, c.expiry_date, c.is_active
+FROM stakeholders s
+LEFT JOIN certifications c ON c.stakeholder_id = s.id
+ORDER BY s.id;</div><table><thead><tr><th>id</th><th>name</th><th>role</th><th>certifying_body</th><th>issue_date</th><th>expiry_date</th><th>is_active</th></tr></thead><tbody><tr><td>1</td><td>Green Valley Farm</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>2</td><td>Hilltop Coffee Farm</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>3</td><td>Coffee Processors Ltd</td><td>processor</td><td>Food Safety</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>4</td><td>Global Coffee Distributors</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>5</td><td>City Coffee Retail</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>6</td><td>Cocoa Farms West</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>7</td><td>Rainforest Cocoa Ltd</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>8</td><td>Cocoa Processing Hub</td><td>processor</td><td>Processing Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>9</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>10</td><td>Sweet Retail Store</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>11</td><td>Cotton Growers Union</td><td>farmer</td><td>Organic Cotton</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>12</td><td>Organic Cotton Farm</td><td>farmer</td><td>Eco Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>13</td><td>Textile Processing Ltd</td><td>processor</td><td>Textile Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>14</td><td>Fabric Distributors</td><td>distributor</td><td>Distribution Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>15</td><td>Clothing Retail Hub</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td></tr><tr><td>16</td><td>Expired Farm</td><td>farmer</td><td>FairTrade</td><td>2018-01-01</td><td>2020-01-01</td><td>True</td></tr><tr><td>17</td><td>Uncertified Retailer</td><td>retailer</td><td>NULL</td><td>NULL</td><td>NULL</td><td>NULL</td></tr><tr><td>18</td><td>Revoked Distributor</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>False</td></tr></tbody></table><div class="row-count">(18 rows)</div></div></div></div><div class="scenario" id="scenario-3"><div class="scenario-header"><div class="scenario-num">3</div><h2>All Product Batches with Owner Details</h2></div><div class="scenario-body"><div class="scenario-desc">24 product batches across Coffee (100-107), Cocoa (200-207), and Cotton (300-307) chains.</div><div class="query-block"><div class="query-label">Query</div><div class="query-sql">SELECT b.id, b.product_name, b.quantity, b.unit, s.name AS owner, s.role
+FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id ORDER BY b.id;</div><table><thead><tr><th>id</th><th>product_name</th><th>quantity</th><th>unit</th><th>owner</th><th>role</th></tr></thead><tbody><tr><td>100</td><td>Coffee Raw A</td><td>1000</td><td>kg</td><td>Green Valley Farm</td><td>farmer</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>800</td><td>kg</td><td>Hilltop Coffee Farm</td><td>farmer</td></tr><tr><td>102</td><td>Coffee Proc A1</td><td>600</td><td>kg</td><td>Coffee Processors Ltd</td><td>processor</td></tr><tr><td>103</td><td>Coffee Proc A2</td><td>400</td><td>kg</td><td>Coffee Processors Ltd</td><td>processor</td></tr><tr><td>104</td><td>Coffee Proc B1</td><td>800</td><td>kg</td><td>Coffee Processors Ltd</td><td>processor</td></tr><tr><td>105</td><td>Coffee Export</td><td>1800</td><td>kg</td><td>Global Coffee Distributors</td><td>distributor</td></tr><tr><td>106</td><td>Coffee Retail 1</td><td>900</td><td>kg</td><td>City Coffee Retail</td><td>retailer</td></tr><tr><td>107</td><td>Coffee Retail 2</td><td>900</td><td>kg</td><td>City Coffee Retail</td><td>retailer</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>900</td><td>kg</td><td>Cocoa Farms West</td><td>farmer</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>700</td><td>kg</td><td>Rainforest Cocoa Ltd</td><td>farmer</td></tr><tr><td>202</td><td>Cocoa Proc A1</td><td>500</td><td>kg</td><td>Cocoa Processing Hub</td><td>processor</td></tr><tr><td>203</td><td>Cocoa Proc A2</td><td>400</td><td>kg</td><td>Cocoa Processing Hub</td><td>processor</td></tr><tr><td>204</td><td>Cocoa Proc B1</td><td>700</td><td>kg</td><td>Cocoa Processing Hub</td><td>processor</td></tr><tr><td>205</td><td>Cocoa Export</td><td>1600</td><td>kg</td><td>Chocolate Distributors Inc</td><td>distributor</td></tr><tr><td>206</td><td>Chocolate Batch 1</td><td>800</td><td>kg</td><td>Sweet Retail Store</td><td>retailer</td></tr><tr><td>207</td><td>Chocolate Batch 2</td><td>800</td><td>kg</td><td>Sweet Retail Store</td><td>retailer</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>1200</td><td>kg</td><td>Cotton Growers Union</td><td>farmer</td></tr><tr><td>301</td><td>Cotton Raw B</td><td>900</td><td>kg</td><td>Organic Cotton Farm</td><td>farmer</td></tr><tr><td>302</td><td>Cotton Proc A1</td><td>700</td><td>kg</td><td>Textile Processing Ltd</td><td>processor</td></tr><tr><td>303</td><td>Cotton Proc A2</td><td>500</td><td>kg</td><td>Textile Processing Ltd</td><td>processor</td></tr><tr><td>304</td><td>Cotton Proc B1</td><td>900</td><td>kg</td><td>Textile Processing Ltd</td><td>processor</td></tr><tr><td>305</td><td>Fabric Export</td><td>2100</td><td>kg</td><td>Fabric Distributors</td><td>distributor</td></tr><tr><td>306</td><td>Clothing Batch 1</td><td>1000</td><td>kg</td><td>Clothing Retail Hub</td><td>retailer</td></tr><tr><td>307</td><td>Clothing Batch 2</td><td>1100</td><td>kg</td><td>Clothing Retail Hub</td><td>retailer</td></tr></tbody></table><div class="row-count">(24 rows)</div></div></div></div><div class="scenario" id="scenario-4"><div class="scenario-header"><div class="scenario-num">4</div><h2>Supply Chain Relationships (Batch Relations)</h2></div><div class="scenario-body"><div class="scenario-desc">Parent-child relationships forming a Directed Acyclic Graph (DAG) — models splitting and merging of batches through processing stages.</div><div class="query-block"><div class="query-label">Query</div><div class="query-sql">SELECT br.parent_batch_id, pb.product_name AS parent_product,
+       br.child_batch_id, cb.product_name AS child_product
+FROM batch_relations br
+JOIN batches pb ON br.parent_batch_id = pb.id
+JOIN batches cb ON br.child_batch_id = cb.id
+ORDER BY br.parent_batch_id, br.child_batch_id;</div><table><thead><tr><th>parent_batch_id</th><th>parent_product</th><th>child_batch_id</th><th>child_product</th></tr></thead><tbody><tr><td>100</td><td>Coffee Raw A</td><td>102</td><td>Coffee Proc A1</td></tr><tr><td>100</td><td>Coffee Raw A</td><td>103</td><td>Coffee Proc A2</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>104</td><td>Coffee Proc B1</td></tr><tr><td>102</td><td>Coffee Proc A1</td><td>105</td><td>Coffee Export</td></tr><tr><td>103</td><td>Coffee Proc A2</td><td>105</td><td>Coffee Export</td></tr><tr><td>104</td><td>Coffee Proc B1</td><td>105</td><td>Coffee Export</td></tr><tr><td>105</td><td>Coffee Export</td><td>106</td><td>Coffee Retail 1</td></tr><tr><td>105</td><td>Coffee Export</td><td>107</td><td>Coffee Retail 2</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>202</td><td>Cocoa Proc A1</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>203</td><td>Cocoa Proc A2</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>204</td><td>Cocoa Proc B1</td></tr><tr><td>202</td><td>Cocoa Proc A1</td><td>205</td><td>Cocoa Export</td></tr><tr><td>203</td><td>Cocoa Proc A2</td><td>205</td><td>Cocoa Export</td></tr><tr><td>204</td><td>Cocoa Proc B1</td><td>205</td><td>Cocoa Export</td></tr><tr><td>205</td><td>Cocoa Export</td><td>206</td><td>Chocolate Batch 1</td></tr><tr><td>205</td><td>Cocoa Export</td><td>207</td><td>Chocolate Batch 2</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>302</td><td>Cotton Proc A1</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>303</td><td>Cotton Proc A2</td></tr><tr><td>301</td><td>Cotton Raw B</td><td>304</td><td>Cotton Proc B1</td></tr><tr><td>302</td><td>Cotton Proc A1</td><td>305</td><td>Fabric Export</td></tr><tr><td>303</td><td>Cotton Proc A2</td><td>305</td><td>Fabric Export</td></tr><tr><td>304</td><td>Cotton Proc B1</td><td>305</td><td>Fabric Export</td></tr><tr><td>305</td><td>Fabric Export</td><td>306</td><td>Clothing Batch 1</td></tr><tr><td>305</td><td>Fabric Export</td><td>307</td><td>Clothing Batch 2</td></tr></tbody></table><div class="row-count">(24 rows)</div></div></div></div><div class="scenario" id="scenario-5"><div class="scenario-header"><div class="scenario-num">5</div><h2>Backward Lineage Tracing — Coffee Retail to Origin</h2></div><div class="scenario-body"><div class="scenario-desc">Traces <em>Coffee Retail 1</em> (batch 106) backward through every supply-chain stage to its raw-material origins at the farm level. The recursive CTE walks the <code>batch_relations</code> DAG until no more parents are found; <code>UNION</code> (not <code>UNION ALL</code>) collapses the same node visited through multiple paths.</div><div class="query-block"><div class="query-label">Recursive Backward Lineage Query (batch_id = 106)</div><div class="query-sql">WITH RECURSIVE lineage AS (
+    SELECT b.id, b.product_name, s.name AS owner, s.role, 0 AS depth
+    FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id
+    WHERE b.id = 106
+    UNION
+    SELECT parent.id, parent.product_name, ps.name, ps.role, l.depth + 1
+    FROM batches parent
+    JOIN stakeholders ps ON parent.current_owner_id = ps.id
+    JOIN batch_relations br ON br.parent_batch_id = parent.id
+    JOIN lineage l ON l.id = br.child_batch_id
+)
+SELECT * FROM lineage ORDER BY depth DESC, id;</div><table><thead><tr><th>id</th><th>product_name</th><th>owner</th><th>role</th><th>depth</th></tr></thead><tbody><tr><td>100</td><td>Coffee Raw A</td><td>Green Valley Farm</td><td>farmer</td><td>3</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>Hilltop Coffee Farm</td><td>farmer</td><td>3</td></tr><tr><td>102</td><td>Coffee Proc A1</td><td>Coffee Processors Ltd</td><td>processor</td><td>2</td></tr><tr><td>103</td><td>Coffee Proc A2</td><td>Coffee Processors Ltd</td><td>processor</td><td>2</td></tr><tr><td>104</td><td>Coffee Proc B1</td><td>Coffee Processors Ltd</td><td>processor</td><td>2</td></tr><tr><td>105</td><td>Coffee Export</td><td>Global Coffee Distributors</td><td>distributor</td><td>1</td></tr><tr><td>106</td><td>Coffee Retail 1</td><td>City Coffee Retail</td><td>retailer</td><td>0</td></tr></tbody></table><div class="row-count">(7 rows)</div></div></div></div><div class="scenario" id="scenario-6"><div class="scenario-header"><div class="scenario-num">6</div><h2>Forward Tracing — Impact Analysis from Raw Material</h2></div><div class="scenario-body"><div class="scenario-desc">Simulates a recall: traces <em>Cocoa Raw A</em> (batch 200) forward to find every downstream product that would be affected. Critical for rapid impact analysis.</div><div class="query-block"><div class="query-label">Recursive Forward Trace Query (batch_id = 200)</div><div class="query-sql">WITH RECURSIVE trace AS (
+    SELECT b.id, b.product_name, s.name AS owner, s.role, 0 AS depth
+    FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id
+    WHERE b.id = 200
+    UNION
+    SELECT child.id, child.product_name, cs.name, cs.role, t.depth + 1
+    FROM batches child
+    JOIN stakeholders cs ON child.current_owner_id = cs.id
+    JOIN batch_relations br ON br.child_batch_id = child.id
+    JOIN trace t ON t.id = br.parent_batch_id
+)
+SELECT * FROM trace ORDER BY depth, id;</div><table><thead><tr><th>id</th><th>product_name</th><th>owner</th><th>role</th><th>depth</th></tr></thead><tbody><tr><td>200</td><td>Cocoa Raw A</td><td>Cocoa Farms West</td><td>farmer</td><td>0</td></tr><tr><td>202</td><td>Cocoa Proc A1</td><td>Cocoa Processing Hub</td><td>processor</td><td>1</td></tr><tr><td>203</td><td>Cocoa Proc A2</td><td>Cocoa Processing Hub</td><td>processor</td><td>1</td></tr><tr><td>205</td><td>Cocoa Export</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>2</td></tr><tr><td>206</td><td>Chocolate Batch 1</td><td>Sweet Retail Store</td><td>retailer</td><td>3</td></tr><tr><td>207</td><td>Chocolate Batch 2</td><td>Sweet Retail Store</td><td>retailer</td><td>3</td></tr></tbody></table><div class="row-count">(6 rows)</div></div></div></div><div class="scenario" id="scenario-7"><div class="scenario-header"><div class="scenario-num">7</div><h2>Certification Trigger — Blocking Uncertified Stakeholder</h2></div><div class="scenario-body"><div class="scenario-desc">The <code>certification_trigger</code> (BEFORE INSERT on <code>batches</code>) prevents any batch creation if the stakeholder lacks a valid active certification. Stakeholder 17 (<em>Uncertified Retailer</em>) has <strong>no row</strong> in the certifications table.</div><div class="query-block"><div class="query-label">Attempt: Insert batch for Uncertified Retailer (stakeholder_id = 17)</div><div class="query-sql">INSERT INTO batches (product_name, quantity, unit, current_owner_id) VALUES (&#x27;Illegal Batch&#x27;, 100, &#x27;kg&#x27;, 17);</div><div class="error-box">✗ ERROR: Stakeholder is not certified or certification expired
+CONTEXT:  PL/pgSQL function check_certification() line 9 at RAISE</div></div></div></div><div class="scenario" id="scenario-8"><div class="scenario-header"><div class="scenario-num">8</div><h2>Certification Trigger — Blocking Expired Certification</h2></div><div class="scenario-body"><div class="scenario-desc">Stakeholder 16 (<em>Expired Farm</em>) holds a certification whose <code>expiry_date = 2020-01-01</code>. Because <code>expiry_date &lt; CURRENT_DATE</code>, the trigger rejects the INSERT.</div><div class="query-block"><div class="query-label">Attempt: Insert batch for Expired Farm (stakeholder_id = 16)</div><div class="query-sql">INSERT INTO batches (product_name, quantity, unit, current_owner_id) VALUES (&#x27;Expired Cert Batch&#x27;, 100, &#x27;kg&#x27;, 16);</div><div class="error-box">✗ ERROR: Stakeholder is not certified or certification expired
+CONTEXT:  PL/pgSQL function check_certification() line 9 at RAISE</div></div><div class="query-block"><div class="query-label">Verifying the stakeholder&#x27;s certification (expiry in the past)</div><div class="query-sql">SELECT id, stakeholder_id, certifying_body, issue_date, expiry_date, is_active FROM certifications WHERE stakeholder_id = 16;</div><table><thead><tr><th>id</th><th>stakeholder_id</th><th>certifying_body</th><th>issue_date</th><th>expiry_date</th><th>is_active</th></tr></thead><tbody><tr><td>16</td><td>16</td><td>FairTrade</td><td>2018-01-01</td><td>2020-01-01</td><td>True</td></tr></tbody></table><div class="row-count">(1 row)</div></div></div></div><div class="scenario" id="scenario-9"><div class="scenario-header"><div class="scenario-num">9</div><h2>Certification Trigger — Blocking Revoked Certification</h2></div><div class="scenario-body"><div class="scenario-desc">Stakeholder 18 (<em>Revoked Distributor</em>) holds a certification that was administratively revoked (<code>is_active = FALSE</code>). The trigger rejects the INSERT even though the expiry date is in the future.</div><div class="query-block"><div class="query-label">Attempt: Insert batch for Revoked Distributor (stakeholder_id = 18)</div><div class="query-sql">INSERT INTO batches (product_name, quantity, unit, current_owner_id) VALUES (&#x27;Revoked Cert Batch&#x27;, 100, &#x27;kg&#x27;, 18);</div><div class="error-box">✗ ERROR: Stakeholder is not certified or certification expired
+CONTEXT:  PL/pgSQL function check_certification() line 9 at RAISE</div></div><div class="query-block"><div class="query-label">Verifying the stakeholder&#x27;s certification (is_active = FALSE)</div><div class="query-sql">SELECT id, stakeholder_id, certifying_body, issue_date, expiry_date, is_active FROM certifications WHERE stakeholder_id = 18;</div><table><thead><tr><th>id</th><th>stakeholder_id</th><th>certifying_body</th><th>issue_date</th><th>expiry_date</th><th>is_active</th></tr></thead><tbody><tr><td>17</td><td>18</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>False</td></tr></tbody></table><div class="row-count">(1 row)</div></div></div></div><div class="scenario" id="scenario-10"><div class="scenario-header"><div class="scenario-num">10</div><h2>Transfer Trigger — Blocking Transfer to Uncertified Owner</h2></div><div class="scenario-body"><div class="scenario-desc">The <code>transfer_certification_trigger</code> (BEFORE UPDATE on <code>batches</code>) fires on ownership change only. It guarantees that a certified batch cannot be moved into the custody of an uncertified stakeholder, closing the gap that the INSERT trigger alone would miss.</div><div class="query-block"><div class="query-label">Attempt: Transfer batch 107 to Uncertified Retailer (stakeholder_id = 17)</div><div class="query-sql">UPDATE batches SET current_owner_id = 17 WHERE id = 107;</div><div class="error-box">✗ ERROR: Transfer denied: receiving stakeholder (id=17) is not certified or certification has expired.
+CONTEXT:  PL/pgSQL function check_transfer_certification() line 10 at RAISE</div></div></div></div><div class="scenario" id="scenario-11"><div class="scenario-header"><div class="scenario-num">11</div><h2>Batch Transfer with Automatic Audit Logging</h2></div><div class="scenario-body"><div class="scenario-desc">Demonstrates the <code>transfer_batch(batch_id, new_owner_id)</code> stored function, which safely re-assigns ownership. The <code>audit_update_trigger</code> automatically logs a <code>transferred</code> row, and the <code>transfer_certification_trigger</code> validates that the receiving stakeholder is certified.</div><div class="query-block"><div class="query-label">BEFORE Transfer — Batch 106</div><div class="query-sql">SELECT b.id, b.product_name, s.name AS current_owner FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id WHERE b.id = 106;</div><table><thead><tr><th>id</th><th>product_name</th><th>current_owner</th></tr></thead><tbody><tr><td>106</td><td>Coffee Retail 1</td><td>City Coffee Retail</td></tr></tbody></table><div class="row-count">(1 row)</div></div><div class="query-block"><div class="query-label">Execute Transfer Function</div><div class="query-sql">SELECT transfer_batch(106, 4);</div><table><thead><tr><th>transfer_batch</th></tr></thead><tbody><tr><td>Batch &quot;Coffee Retail 1&quot; (id=106) transferred from City Coffee Retail to Global Coffee Distributors.</td></tr></tbody></table><div class="row-count">(1 row)</div></div><div class="query-block"><div class="query-label">AFTER Transfer — Batch 106</div><div class="query-sql">SELECT b.id, b.product_name, s.name AS current_owner FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id WHERE b.id = 106;</div><table><thead><tr><th>id</th><th>product_name</th><th>current_owner</th></tr></thead><tbody><tr><td>106</td><td>Coffee Retail 1</td><td>Global Coffee Distributors</td></tr></tbody></table><div class="row-count">(1 row)</div></div><div class="query-block"><div class="query-label">Audit Trail for Batch 106 (showing transfer logged automatically)</div><div class="query-sql">SELECT * FROM v_audit_trail WHERE batch_id = 106 ORDER BY timestamp DESC LIMIT 3;</div><table><thead><tr><th>log_id</th><th>action</th><th>batch_id</th><th>product_name</th><th>actor_name</th><th>actor_role</th><th>timestamp</th></tr></thead><tbody><tr><td>25</td><td>transferred</td><td>106</td><td>Coffee Retail 1</td><td>Global Coffee Distributors</td><td>distributor</td><td>2026-04-19 14:59:22.407963</td></tr><tr><td>7</td><td>created</td><td>106</td><td>Coffee Retail 1</td><td>City Coffee Retail</td><td>retailer</td><td>2026-04-19 14:54:47.986876</td></tr></tbody></table><div class="row-count">(2 rows)</div></div></div></div><div class="scenario" id="scenario-12"><div class="scenario-header"><div class="scenario-num">12</div><h2>Audit Log Immutability — Tamper-Proof Verification</h2></div><div class="scenario-body"><div class="scenario-desc">The <code>audit_immutability_trigger</code> rejects any UPDATE or DELETE on <code>audit_log</code>, guaranteeing a tamper-proof, append-only transaction ledger for third-party auditing.</div><div class="query-block"><div class="query-label">Attempt: Modify an audit record</div><div class="query-sql">UPDATE audit_log SET action = &#x27;hacked&#x27; WHERE id = 1;</div><div class="error-box">✗ ERROR: Audit log records are immutable and cannot be modified or deleted.
+CONTEXT:  PL/pgSQL function prevent_audit_modification() line 3 at RAISE</div></div><div class="query-block"><div class="query-label">Attempt: Delete an audit record</div><div class="query-sql">DELETE FROM audit_log WHERE id = 1;</div><div class="error-box">✗ ERROR: Audit log records are immutable and cannot be modified or deleted.
+CONTEXT:  PL/pgSQL function prevent_audit_modification() line 3 at RAISE</div></div></div></div><div class="scenario" id="scenario-13"><div class="scenario-header"><div class="scenario-num">13</div><h2>Views — Compliance Overview (all four states)</h2></div><div class="scenario-body"><div class="scenario-desc">The <code>v_compliance_overview</code> view provides a real-time compliance status for every stakeholder. Thanks to the edge-case seed data, all four CASE branches appear: <code>COMPLIANT</code>, <code>EXPIRED</code> (id 16), <code>NO CERTIFICATION</code> (id 17), and <code>REVOKED</code> (id 18).</div><div class="query-block"><div class="query-label">Query</div><div class="query-sql">SELECT * FROM v_compliance_overview ORDER BY stakeholder_id;</div><table><thead><tr><th>stakeholder_id</th><th>name</th><th>role</th><th>certifying_body</th><th>issue_date</th><th>expiry_date</th><th>is_active</th><th>compliance_status</th></tr></thead><tbody><tr><td>1</td><td>Green Valley Farm</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>2</td><td>Hilltop Coffee Farm</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>3</td><td>Coffee Processors Ltd</td><td>processor</td><td>Food Safety</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>4</td><td>Global Coffee Distributors</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>5</td><td>City Coffee Retail</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>6</td><td>Cocoa Farms West</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>7</td><td>Rainforest Cocoa Ltd</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>8</td><td>Cocoa Processing Hub</td><td>processor</td><td>Processing Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>9</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>10</td><td>Sweet Retail Store</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>11</td><td>Cotton Growers Union</td><td>farmer</td><td>Organic Cotton</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>12</td><td>Organic Cotton Farm</td><td>farmer</td><td>Eco Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>13</td><td>Textile Processing Ltd</td><td>processor</td><td>Textile Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>14</td><td>Fabric Distributors</td><td>distributor</td><td>Distribution Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>15</td><td>Clothing Retail Hub</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>16</td><td>Expired Farm</td><td>farmer</td><td>FairTrade</td><td>2018-01-01</td><td>2020-01-01</td><td>True</td><td>EXPIRED</td></tr><tr><td>17</td><td>Uncertified Retailer</td><td>retailer</td><td>NULL</td><td>NULL</td><td>NULL</td><td>NULL</td><td>NO CERTIFICATION</td></tr><tr><td>18</td><td>Revoked Distributor</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>False</td><td>REVOKED</td></tr></tbody></table><div class="row-count">(18 rows)</div></div></div></div><div class="scenario" id="scenario-14"><div class="scenario-header"><div class="scenario-num">14</div><h2>Views — Supply Chain Summary</h2></div><div class="scenario-body"><div class="scenario-desc">Aggregated statistics per product supply chain — total batches, total quantity, and unique stakeholders involved.</div><div class="query-block"><div class="query-label">Query</div><div class="query-sql">SELECT * FROM v_supply_chain_summary;</div><table><thead><tr><th>supply_chain</th><th>total_batches</th><th>total_quantity</th><th>unique_stakeholders</th></tr></thead><tbody><tr><td>Cocoa</td><td>8</td><td>6400</td><td>5</td></tr><tr><td>Coffee</td><td>8</td><td>7200</td><td>5</td></tr><tr><td>Cotton</td><td>8</td><td>8400</td><td>5</td></tr></tbody></table><div class="row-count">(3 rows)</div></div></div></div><div class="scenario" id="scenario-15"><div class="scenario-header"><div class="scenario-num">15</div><h2>Views — Final Retail Products &amp; Raw Materials</h2></div><div class="scenario-body"><div class="scenario-desc">v_final_products shows leaf batches (retail-ready, no downstream children). v_raw_materials shows root batches (farm-origin, no upstream parents).</div><div class="query-block"><div class="query-label">Final Retail Products (Leaf Nodes)</div><div class="query-sql">SELECT * FROM v_final_products ORDER BY batch_id;</div><table><thead><tr><th>batch_id</th><th>product_name</th><th>amount</th><th>retailer</th></tr></thead><tbody><tr><td>106</td><td>Coffee Retail 1</td><td>900 kg</td><td>City Coffee Retail</td></tr><tr><td>107</td><td>Coffee Retail 2</td><td>900 kg</td><td>City Coffee Retail</td></tr><tr><td>206</td><td>Chocolate Batch 1</td><td>800 kg</td><td>Sweet Retail Store</td></tr><tr><td>207</td><td>Chocolate Batch 2</td><td>800 kg</td><td>Sweet Retail Store</td></tr><tr><td>306</td><td>Clothing Batch 1</td><td>1000 kg</td><td>Clothing Retail Hub</td></tr><tr><td>307</td><td>Clothing Batch 2</td><td>1100 kg</td><td>Clothing Retail Hub</td></tr></tbody></table><div class="row-count">(6 rows)</div></div><div class="query-block"><div class="query-label">Raw Material Sources (Root Nodes)</div><div class="query-sql">SELECT * FROM v_raw_materials ORDER BY batch_id;</div><table><thead><tr><th>batch_id</th><th>product_name</th><th>amount</th><th>source_farm</th></tr></thead><tbody><tr><td>100</td><td>Coffee Raw A</td><td>1000 kg</td><td>Green Valley Farm</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>800 kg</td><td>Hilltop Coffee Farm</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>900 kg</td><td>Cocoa Farms West</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>700 kg</td><td>Rainforest Cocoa Ltd</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>1200 kg</td><td>Cotton Growers Union</td></tr><tr><td>301</td><td>Cotton Raw B</td><td>900 kg</td><td>Organic Cotton Farm</td></tr></tbody></table><div class="row-count">(6 rows)</div></div></div></div><div class="scenario" id="scenario-16"><div class="scenario-header"><div class="scenario-num">16</div><h2>Stored Function — get_backward_lineage()</h2></div><div class="scenario-body"><div class="scenario-desc">The get_backward_lineage() stored function wraps the recursive CTE into a reusable call. Tracing Chocolate Batch 2 (id=207) back to cocoa farm origins.</div><div class="query-block"><div class="query-label">Function Call</div><div class="query-sql">SELECT * FROM get_backward_lineage(207);</div><table><thead><tr><th>batch_id</th><th>product_name</th><th>owner_name</th><th>owner_role</th><th>depth</th></tr></thead><tbody><tr><td>200</td><td>Cocoa Raw A</td><td>Cocoa Farms West</td><td>farmer</td><td>3</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>Rainforest Cocoa Ltd</td><td>farmer</td><td>3</td></tr><tr><td>204</td><td>Cocoa Proc B1</td><td>Cocoa Processing Hub</td><td>processor</td><td>2</td></tr><tr><td>203</td><td>Cocoa Proc A2</td><td>Cocoa Processing Hub</td><td>processor</td><td>2</td></tr><tr><td>202</td><td>Cocoa Proc A1</td><td>Cocoa Processing Hub</td><td>processor</td><td>2</td></tr><tr><td>205</td><td>Cocoa Export</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>1</td></tr><tr><td>207</td><td>Chocolate Batch 2</td><td>Sweet Retail Store</td><td>retailer</td><td>0</td></tr></tbody></table><div class="row-count">(7 rows)</div></div></div></div><div class="scenario" id="scenario-17"><div class="scenario-header"><div class="scenario-num">17</div><h2>Stored Function — get_forward_trace()</h2></div><div class="scenario-body"><div class="scenario-desc">The get_forward_trace() function traces Cotton Raw A (id=300) forward to find all downstream clothing products — useful for recall/impact analysis.</div><div class="query-block"><div class="query-label">Function Call</div><div class="query-sql">SELECT * FROM get_forward_trace(300);</div><table><thead><tr><th>batch_id</th><th>product_name</th><th>owner_name</th><th>owner_role</th><th>depth</th></tr></thead><tbody><tr><td>300</td><td>Cotton Raw A</td><td>Cotton Growers Union</td><td>farmer</td><td>0</td></tr><tr><td>302</td><td>Cotton Proc A1</td><td>Textile Processing Ltd</td><td>processor</td><td>1</td></tr><tr><td>303</td><td>Cotton Proc A2</td><td>Textile Processing Ltd</td><td>processor</td><td>1</td></tr><tr><td>305</td><td>Fabric Export</td><td>Fabric Distributors</td><td>distributor</td><td>2</td></tr><tr><td>306</td><td>Clothing Batch 1</td><td>Clothing Retail Hub</td><td>retailer</td><td>3</td></tr><tr><td>307</td><td>Clothing Batch 2</td><td>Clothing Retail Hub</td><td>retailer</td><td>3</td></tr></tbody></table><div class="row-count">(6 rows)</div></div></div></div><div class="scenario" id="scenario-18"><div class="scenario-header"><div class="scenario-num">18</div><h2>Stored Function — get_compliance_report()</h2></div><div class="scenario-body"><div class="scenario-desc">Full compliance audit. Its result shape matches <code>v_compliance_overview</code>, so the function and the view are interchangeable. Stakeholders 16, 17, and 18 are flagged as non-compliant (EXPIRED, NO CERTIFICATION, REVOKED respectively).</div><div class="query-block"><div class="query-label">Function Call</div><div class="query-sql">SELECT * FROM get_compliance_report();</div><table><thead><tr><th>stakeholder_id</th><th>name</th><th>role</th><th>certifying_body</th><th>issue_date</th><th>expiry_date</th><th>is_active</th><th>compliance_status</th></tr></thead><tbody><tr><td>1</td><td>Green Valley Farm</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>2</td><td>Hilltop Coffee Farm</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>3</td><td>Coffee Processors Ltd</td><td>processor</td><td>Food Safety</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>4</td><td>Global Coffee Distributors</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>5</td><td>City Coffee Retail</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>6</td><td>Cocoa Farms West</td><td>farmer</td><td>FairTrade</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>7</td><td>Rainforest Cocoa Ltd</td><td>farmer</td><td>Organic</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>8</td><td>Cocoa Processing Hub</td><td>processor</td><td>Processing Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>9</td><td>Chocolate Distributors Inc</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>10</td><td>Sweet Retail Store</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>11</td><td>Cotton Growers Union</td><td>farmer</td><td>Organic Cotton</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>12</td><td>Organic Cotton Farm</td><td>farmer</td><td>Eco Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>13</td><td>Textile Processing Ltd</td><td>processor</td><td>Textile Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>14</td><td>Fabric Distributors</td><td>distributor</td><td>Distribution Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>15</td><td>Clothing Retail Hub</td><td>retailer</td><td>Retail Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>True</td><td>COMPLIANT</td></tr><tr><td>16</td><td>Expired Farm</td><td>farmer</td><td>FairTrade</td><td>2018-01-01</td><td>2020-01-01</td><td>True</td><td>EXPIRED</td></tr><tr><td>17</td><td>Uncertified Retailer</td><td>retailer</td><td>NULL</td><td>NULL</td><td>NULL</td><td>NULL</td><td>NO CERTIFICATION</td></tr><tr><td>18</td><td>Revoked Distributor</td><td>distributor</td><td>Export Cert</td><td>2025-01-01</td><td>2030-01-01</td><td>False</td><td>REVOKED</td></tr></tbody></table><div class="row-count">(18 rows)</div></div></div></div><div class="scenario" id="scenario-19"><div class="scenario-header"><div class="scenario-num">19</div><h2>Analytical Queries — Aggregates &amp; Statistics</h2></div><div class="scenario-body"><div class="scenario-desc">Aggregate and analytical queries demonstrating GROUP BY, HAVING, recursive depth calculation, and audit statistics.</div><div class="query-block"><div class="query-label">Total Quantity per Supply Chain Stage</div><div class="query-sql">SELECT s.role, SUM(b.quantity) AS total_quantity, COUNT(b.id) AS batch_count
+FROM batches b JOIN stakeholders s ON b.current_owner_id = s.id
+GROUP BY s.role
+ORDER BY CASE s.role WHEN &#x27;farmer&#x27; THEN 1 WHEN &#x27;processor&#x27; THEN 2 WHEN &#x27;distributor&#x27; THEN 3 WHEN &#x27;retailer&#x27; THEN 4 END;</div><table><thead><tr><th>role</th><th>total_quantity</th><th>batch_count</th></tr></thead><tbody><tr><td>farmer</td><td>5500</td><td>6</td></tr><tr><td>processor</td><td>5500</td><td>9</td></tr><tr><td>distributor</td><td>5500</td><td>3</td></tr><tr><td>retailer</td><td>5500</td><td>6</td></tr></tbody></table><div class="row-count">(4 rows)</div></div><div class="query-block"><div class="query-label">Branching Factor — Batches with Most Children</div><div class="query-sql">SELECT b.id, b.product_name, COUNT(br.child_batch_id) AS children_count
+FROM batches b LEFT JOIN batch_relations br ON b.id = br.parent_batch_id
+GROUP BY b.id, b.product_name HAVING COUNT(br.child_batch_id) &gt; 0
+ORDER BY children_count DESC;</div><table><thead><tr><th>id</th><th>product_name</th><th>children_count</th></tr></thead><tbody><tr><td>305</td><td>Fabric Export</td><td>2</td></tr><tr><td>205</td><td>Cocoa Export</td><td>2</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>2</td></tr><tr><td>105</td><td>Coffee Export</td><td>2</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>2</td></tr><tr><td>100</td><td>Coffee Raw A</td><td>2</td></tr><tr><td>102</td><td>Coffee Proc A1</td><td>1</td></tr><tr><td>103</td><td>Coffee Proc A2</td><td>1</td></tr><tr><td>204</td><td>Cocoa Proc B1</td><td>1</td></tr><tr><td>104</td><td>Coffee Proc B1</td><td>1</td></tr><tr><td>303</td><td>Cotton Proc A2</td><td>1</td></tr><tr><td>202</td><td>Cocoa Proc A1</td><td>1</td></tr><tr><td>301</td><td>Cotton Raw B</td><td>1</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>1</td></tr><tr><td>304</td><td>Cotton Proc B1</td><td>1</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>1</td></tr><tr><td>302</td><td>Cotton Proc A1</td><td>1</td></tr><tr><td>203</td><td>Cocoa Proc A2</td><td>1</td></tr></tbody></table><div class="row-count">(18 rows)</div></div><div class="query-block"><div class="query-label">Supply Chain Depth per Root Batch</div><div class="query-sql">WITH RECURSIVE chain AS (
+    SELECT b.id AS root_id, b.product_name AS root_product, b.id, 0 AS depth
+    FROM batches b WHERE b.id NOT IN (SELECT child_batch_id FROM batch_relations)
+    UNION ALL
+    SELECT c.root_id, c.root_product, br.child_batch_id, c.depth + 1
+    FROM chain c JOIN batch_relations br ON br.parent_batch_id = c.id
+)
+SELECT root_id, root_product, MAX(depth) AS max_chain_depth
+FROM chain GROUP BY root_id, root_product ORDER BY root_id;</div><table><thead><tr><th>root_id</th><th>root_product</th><th>max_chain_depth</th></tr></thead><tbody><tr><td>100</td><td>Coffee Raw A</td><td>3</td></tr><tr><td>101</td><td>Coffee Raw B</td><td>3</td></tr><tr><td>200</td><td>Cocoa Raw A</td><td>3</td></tr><tr><td>201</td><td>Cocoa Raw B</td><td>3</td></tr><tr><td>300</td><td>Cotton Raw A</td><td>3</td></tr><tr><td>301</td><td>Cotton Raw B</td><td>3</td></tr></tbody></table><div class="row-count">(6 rows)</div></div><div class="query-block"><div class="query-label">Audit Actions Summary</div><div class="query-sql">SELECT action, COUNT(*) AS total FROM audit_log GROUP BY action ORDER BY total DESC;</div><table><thead><tr><th>action</th><th>total</th></tr></thead><tbody><tr><td>created</td><td>24</td></tr></tbody></table><div class="row-count">(1 row)</div></div></div></div><div class="scenario" id="scenario-20"><div class="scenario-header"><div class="scenario-num">20</div><h2>ER Diagram &amp; Supply Chain Visualization</h2></div><div class="scenario-body"><div class="scenario-desc">Visual representations of the database schema and the supply chain data. The graph is auto-generated from live database data using Python + Graphviz.</div><div class="query-block"><div class="query-label">Entity-Relationship Diagram</div><div class="images-section"><img src="file:///C:/Users/jishu/Desktop/dbms/shresh ftt/visualise/er_diagram.png" alt="ER Diagram"><div class="img-caption">ER Diagram — 5 tables with foreign key relationships</div></div></div><div class="query-block"><div class="query-label">Supply Chain Graph (Generated from Data)</div><div class="images-section"><img src="file:///C:/Users/jishu/Desktop/dbms/shresh ftt/visualise/supply_chain_graph.png" alt="Supply Chain Graph"><div class="img-caption">Supply Chain DAG — 3 chains (Coffee, Cocoa, Cotton) with color-coded stakeholder roles</div></div></div></div></div>
+</body>
+</html>

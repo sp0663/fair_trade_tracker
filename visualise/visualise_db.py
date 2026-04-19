@@ -5,7 +5,7 @@ from graphviz import Digraph
 conn = psycopg2.connect(
     dbname = "fair_trade_tracker",
     user = "postgres",
-    password = "password",
+    password = "postgres",
     host = "localhost",
     port = "5432"
 )

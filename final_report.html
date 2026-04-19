@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fair Trade Supply Chain Tracker · Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #ffffff;
+    color: #1f2937;
+    padding: 60px 90px;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .cover {
+    text-align: center;
+    padding: 80px 0 60px;
+    border-bottom: 2px solid #1e3a8a;
+    margin-bottom: 60px;
+  }
+  .cover .course {
+    color: #1e3a8a;
+    font-size: 0.95em;
+    letter-spacing: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-size: 2.4em;
+    color: #0f172a;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .cover .subtitle {
+    color: #475569;
+    font-size: 1.05em;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+  .cover .authors {
+    font-size: 1em;
+    color: #1f2937;
+    margin-top: 30px;
+  }
+  .cover .authors .author {
+    display: inline-block;
+    margin: 0 20px;
+    padding: 10px 22px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f8fafc;
+  }
+  .cover .authors .author strong {
+    display: block;
+    color: #0f172a;
+    font-weight: 600;
+  }
+  .cover .authors .author span {
+    color: #64748b;
+    font-size: 0.9em;
+  }
+  .cover .meta {
+    color: #64748b;
+    margin-top: 28px;
+    font-size: 0.9em;
+  }
+  section {
+    margin-bottom: 55px;
+    page-break-inside: avoid;
+  }
+  h2 {
+    font-size: 1.6em;
+    color: #0f172a;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1e3a8a;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 1.15em;
+    color: #1e3a8a;
+    margin: 26px 0 12px;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 1em;
+    color: #334155;
+    margin: 18px 0 8px;
+    font-weight: 600;
+  }
+  p {
+    margin-bottom: 14px;
+    color: #1f2937;
+    text-align: justify;
+  }
+  ul, ol {
+    margin: 8px 0 16px 26px;
+    color: #1f2937;
+  }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: #0f172a; }
+  code {
+    font-family: 'Fira Code', monospace;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #1e3a8a;
+  }
+  .toc {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 22px 30px;
+    margin-bottom: 45px;
+  }
+  .toc h3 { margin-top: 0; color: #0f172a; }
+  .toc ol { margin: 10px 0 0 22px; }
+  .toc a { color: #1e3a8a; text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px;
+    font-size: 0.92em;
+  }
+  table.data th, table.data td {
+    border: 1px solid #cbd5e1;
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.data th {
+    background: #1e3a8a;
+    color: white;
+    font-weight: 600;
+  }
+  table.data tr:nth-child(even) td { background: #f8fafc; }
+  .callout {
+    background: #eff6ff;
+    border-left: 4px solid #1e3a8a;
+    padding: 14px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0 20px;
+  }
+  .callout strong { color: #1e3a8a; }
+  .fd-block {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 12px 0 18px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88em;
+    color: #0f172a;
+    white-space: pre-wrap;
+  }
+  .schema-block {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.86em;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .schema-block .kw { color: #7dd3fc; }
+  .figure {
+    margin: 25px 0 30px;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .figure img {
+    max-width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  }
+  .figure .caption {
+    margin-top: 10px;
+    color: #475569;
+    font-size: 0.88em;
+    font-style: italic;
+  }
+  .figure .caption strong { color: #0f172a; font-style: normal; }
+  .scenario-note {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #1e3a8a;
+    border-radius: 0 6px 6px 0;
+    padding: 14px 20px;
+    margin: 10px 0 20px;
+  }
+  .scenario-note h4 { margin-top: 0; color: #0f172a; font-size: 1em; }
+  .scenario-note p { margin-bottom: 6px; font-size: 0.95em; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 12px 0 20px;
+  }
+  .col-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 16px 20px;
+  }
+  .col-box h4 { color: #1e3a8a; margin-top: 0; }
+  .cardinality-list li { margin-bottom: 8px; }
+  footer {
+    border-top: 1px solid #cbd5e1;
+    margin-top: 60px;
+    padding-top: 24px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.88em;
+  }
+  @media print {
+    body { padding: 30px 40px; font-size: 12px; }
+    h2 { font-size: 1.4em; }
+    .figure { page-break-inside: avoid; }
+    section { page-break-inside: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="course">CS251M &nbsp;·&nbsp; Database Systems &nbsp;·&nbsp; Project Report</div>
+  <h1>Fair Trade Supply Chain Tracker</h1>
+  <div class="subtitle">A Normalized Relational Database for End-to-End Ethical Traceability</div>
+  <div class="authors">
+    <div class="author"><strong>Rushil Jain</strong><span>241EC148</span></div>
+    <div class="author"><strong>Shresh Parti</strong><span>241EC252</span></div>
+  </div>
+  <div class="meta">Submitted: 19 April 2026</div>
+</div>
+
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#objectives">Objectives</a></li>
+    <li><a href="#scope">Scope</a></li>
+    <li><a href="#schema">Schema Design and Normalization</a></li>
+    <li><a href="#er">Entity-Relationship Diagram</a></li>
+    <li><a href="#application">Application Explanation with Screenshots</a></li>
+  </ol>
+</div>
+
+<section id="abstract">
+  <h2>1. Abstract</h2>
+  <p>
+    The Fair Trade Supply Chain Tracker is a relational database application designed to bring transparency to the journey a product takes from the farm to the final retail shelf. Modern consumers increasingly want to verify that the food they eat or the clothes they wear have been produced under fair labour and ethical sourcing conditions, but most existing supply chains are fragmented and rely on paper based certification records that are easy to forge and difficult to audit. Our project addresses this problem by modelling the entire supply chain inside PostgreSQL, so that every stakeholder, every product batch, every ownership transfer, and every certification can be tracked, validated, and queried in a consistent way.
+  </p>
+  <p>
+    The system is built around five normalized tables and enforces three categories of rules directly in the database: certification validation on batch creation and transfer, immutable audit logging for every change, and a directed acyclic graph model for batch lineage that supports both splitting and merging of material through processing stages. Recursive Common Table Expressions make it possible to trace any final retail batch backward to its raw origin, or forward from any farm to every downstream product it reached. Triggers block batch creation by uncertified, expired, or revoked stakeholders before the row is ever written, which means the database itself refuses to store non-compliant data rather than depending on the application layer to do so.
+  </p>
+  <p>
+    The project is implemented with PostgreSQL 16, PL/pgSQL triggers and stored functions, and Python with psycopg2 and Graphviz for the visualisation and reporting layer. The result is a self-auditing database that models a realistic three chain supply network covering coffee, cocoa, and cotton products across eighteen stakeholders and twenty four tracked batches.
+  </p>
+</section>
+
+<section id="objectives">
+  <h2>2. Objectives</h2>
+  <p>
+    The primary goal of this project is to design a well structured, fully normalized relational database that can track product batches through every stage of a Fair Trade supply chain and enforce ethical compliance rules automatically. The specific functional objectives of the application are listed below.
+  </p>
+  <ol>
+    <li>
+      <strong>End to end batch lineage.</strong> Given any batch in the system, the database must be able to return its complete ancestry back to one or more raw material origins, and also trace forward from any raw material to every downstream product that descended from it. This enables both provenance verification for consumers and rapid impact analysis during product recalls.
+    </li>
+    <li>
+      <strong>Automated certification enforcement.</strong> Only stakeholders holding an active, non-expired, non-revoked Fair Trade certification may own or receive a batch. This rule must be enforced inside the database through triggers, not merely in application code, so that no client library or manual SQL session can bypass it.
+    </li>
+    <li>
+      <strong>Tamper proof auditing.</strong> Every insertion of a new batch and every transfer of ownership should create an immutable record in a dedicated audit log. Once written, audit entries cannot be updated or deleted, which allows external auditors to trust the log as a faithful history.
+    </li>
+    <li>
+      <strong>Compliance reporting.</strong> The system must expose a single view that classifies each stakeholder into one of four compliance states: COMPLIANT, EXPIRED, REVOKED, or NO CERTIFICATION. A matching stored function returns the same result for integration with reporting tools.
+    </li>
+    <li>
+      <strong>Directed acyclic graph modelling.</strong> Real supply chains regularly split and merge material. For example, two different raw cocoa batches can be combined by a processor into a single paste batch which is then split again into multiple retail bars. The database must capture this naturally through a many to many relationship rather than forcing a tree structure.
+    </li>
+    <li>
+      <strong>Data visualisation and reporting.</strong> A Python reporting layer should be able to connect to the live database, run every key query, and produce an HTML run report along with a rendered supply chain graph and a live Entity-Relationship diagram.
+    </li>
+  </ol>
+</section>
+
+<section id="scope">
+  <h2>3. Scope</h2>
+
+  <h3>3.1 Boundaries</h3>
+  <p>
+    The project scope is deliberately kept to the database layer and a lightweight Python reporting shell. The following items are within scope.
+  </p>
+  <ul>
+    <li>Schema design, normalization analysis, and implementation in PostgreSQL 16.</li>
+    <li>Business rule enforcement through PL/pgSQL triggers and stored functions.</li>
+    <li>Recursive lineage queries and aggregated analytical queries.</li>
+    <li>Seed data that covers three realistic supply chains (coffee, cocoa, cotton) along with three deliberate edge case stakeholders that exercise every compliance state.</li>
+    <li>Python scripts that produce the ER diagram, the supply chain graph, and the HTML run report.</li>
+  </ul>
+  <p>The following are explicitly outside scope and are left as reasonable extensions for future work.</p>
+  <ul>
+    <li>A user facing web interface with role based login. The database models stakeholders, but there is no dedicated authentication subsystem.</li>
+    <li>Real time event streaming or messaging. Ownership transfers are triggered through direct function calls, not through external events.</li>
+    <li>Integration with external certification registries. Certification rows are captured as trusted input for this project, although in practice they would be synchronised with an external authority.</li>
+    <li>Horizontal scaling concerns such as sharding, read replicas, or multi region replication.</li>
+  </ul>
+
+  <h3>3.2 Assumptions</h3>
+  <ul>
+    <li>The certifications table is treated as the authoritative source of compliance information, and each stakeholder owns at most one certification row in the seed data.</li>
+    <li>Batch relationships form a directed acyclic graph, meaning that a batch cannot eventually become an ancestor of itself. The recursive queries therefore terminate without additional cycle detection.</li>
+    <li>Quantities are recorded as integers in the unit stored for each batch. Unit conversion is not performed inside the database.</li>
+    <li>Timestamps are recorded in the database server time zone. No explicit time zone handling beyond that is required for this project.</li>
+  </ul>
+
+  <h3>3.3 Limitations</h3>
+  <ul>
+    <li>The database currently supports one active certification per stakeholder. A design extension allowing certification history per stakeholder would require expanding the trigger logic to select the most recent active certification.</li>
+    <li>Ownership history for a batch is preserved only inside the audit log rather than in a dedicated ownership table, so reconstructing past ownership requires scanning audit rows.</li>
+    <li>The demonstration data set is intentionally small (eighteen stakeholders, twenty four batches) to keep queries readable in the report. The same schema has been verified to scale to much larger data sets without modification.</li>
+  </ul>
+</section>
+
+<section id="schema">
+  <h2>4. Schema Design and Normalization</h2>
+
+  <h3>4.1 Entities Identified</h3>
+  <p>After analysing how products and certifications move through a Fair Trade supply chain, five core entities were identified.</p>
+  <table class="data">
+    <thead>
+      <tr><th>Entity</th><th>Role in the System</th><th>Primary Key</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Stakeholder</strong></td><td>Any participant in the chain: farmer, processor, distributor, or retailer.</td><td><code>id</code></td></tr>
+      <tr><td><strong>Certification</strong></td><td>The Fair Trade certification record belonging to a stakeholder, including issue date, expiry date, and active status.</td><td><code>id</code></td></tr>
+      <tr><td><strong>Batch</strong></td><td>A specific lot of product owned at some point by a stakeholder. Has a current owner and a quantity.</td><td><code>id</code></td></tr>
+      <tr><td><strong>Batch Relation</strong></td><td>A parent to child link that records the fact that a new batch was produced from one or more earlier batches. This is the associative entity for the many to many relationship between batches.</td><td><code>(parent_batch_id, child_batch_id)</code></td></tr>
+      <tr><td><strong>Audit Log</strong></td><td>An append only record of every action taken on a batch (creation, update, transfer).</td><td><code>id</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Relationships Between Entities</h3>
+  <ul class="cardinality-list">
+    <li><strong>Stakeholder to Certification</strong> (1 to 1 in our seed design, 1 to many in the general case). A stakeholder may hold a certification, and every certification belongs to exactly one stakeholder.</li>
+    <li><strong>Stakeholder to Batch</strong> (1 to many). Each batch has exactly one current owner, and a stakeholder can own multiple batches.</li>
+    <li><strong>Stakeholder to Audit Log</strong> (1 to many). Each audit entry names the actor stakeholder responsible for the event.</li>
+    <li><strong>Batch to Batch</strong> (many to many, resolved through <code>batch_relations</code>). A child batch can be produced from multiple parent batches (merging) and a parent batch can flow into multiple child batches (splitting). This is the directed acyclic graph that gives the system its lineage capability.</li>
+    <li><strong>Batch to Audit Log</strong> (1 to many). Every logged event references the batch it concerns.</li>
+  </ul>
+
+  <h3>4.3 Normalization Walkthrough</h3>
+  <p>
+    To justify the final schema, the design is walked through the usual normalization steps starting from a single wide unnormalized table. This is the table a beginner might sketch first: one row per stakeholder with every related piece of information packed in.
+  </p>
+
+  <h4>Initial unnormalized form</h4>
+  <div class="fd-block">StakeholderInfo (
+  stakeholder_id,
+  stakeholder_name,
+  role,
+  certifying_body,
+  cert_issue_date,
+  cert_expiry_date,
+  cert_is_active,
+  batch_ids_owned,        -- repeating group: "100, 102, 105"
+  batch_products_owned,   -- repeating group: "Raw A, Proc A1, Export"
+  parent_child_pairs,     -- repeating group: "(100,102);(102,105)"
+  audit_actions           -- repeating group: "created, transferred, ..."
+)</div>
+  <p>This table is not even in First Normal Form. Several attributes contain comma separated lists, and a single row mixes information about a stakeholder, their certification, every batch they own, every parent to child lineage link in which they are involved, and every audit event.</p>
+
+  <h4>First Normal Form (1NF)</h4>
+  <p>1NF requires that every column holds a single atomic value and that there are no repeating groups. Each repeating group is moved into its own table, keyed against the stakeholder.</p>
+  <div class="fd-block">stakeholders(id, name, role, certifying_body, cert_issue_date, cert_expiry_date, cert_is_active)
+batches(id, product_name, quantity, unit, current_owner_id)
+batch_relations(parent_batch_id, child_batch_id)
+audit_log(id, batch_id, action, actor_id, timestamp)</div>
+  <p>The schema now satisfies 1NF. Every attribute is atomic and there are no multi valued fields.</p>
+
+  <h4>Second Normal Form (2NF)</h4>
+  <p>2NF requires 1NF plus the removal of partial dependencies on a composite primary key. The only composite key in the schema is <code>batch_relations(parent_batch_id, child_batch_id)</code>. Since this table has no non key attributes at all, there can be no partial dependency to violate 2NF. Every other table uses a single column surrogate key, so 2NF is automatically satisfied for those as well.</p>
+
+  <h4>Third Normal Form (3NF)</h4>
+  <p>3NF requires 2NF plus the elimination of transitive dependencies, meaning no non key attribute may depend on another non key attribute. Examining <code>stakeholders</code> in its 1NF form exposes a violation.</p>
+  <div class="fd-block">Functional dependencies on stakeholders after 1NF:
+  id -> name, role
+  id -> certifying_body, cert_issue_date, cert_expiry_date, cert_is_active
+
+Problem: the certification attributes describe a certification, not the stakeholder.
+If a stakeholder is ever issued a new certification, or the certifying body renames
+itself, every affected row in stakeholders would have to be updated. The certification
+attributes are transitively dependent on the conceptual "certification identity",
+which is a separate entity.</div>
+  <p>The fix is to split the certification attributes into a dedicated table keyed on its own id, linked back to stakeholders through a foreign key.</p>
+  <div class="fd-block">stakeholders(id, name, role, created_at)
+certifications(id, stakeholder_id, certifying_body, issue_date, expiry_date, is_active)
+batches(id, product_name, quantity, unit, current_owner_id, created_at)
+batch_relations(parent_batch_id, child_batch_id)
+audit_log(id, batch_id, action, actor_id, timestamp)</div>
+  <p>After this decomposition the schema is in 3NF. Every non key attribute in every table now depends only on the primary key of that table.</p>
+
+  <h4>Boyce-Codd Normal Form (BCNF)</h4>
+  <p>BCNF strengthens 3NF by requiring that, for every non trivial functional dependency <code>X -&gt; Y</code>, the left hand side <code>X</code> must be a superkey. Each table is checked below.</p>
+  <table class="data">
+    <thead>
+      <tr><th>Table</th><th>Non trivial FDs</th><th>LHS is superkey?</th><th>BCNF?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>stakeholders</code></td><td><code>id &rarr; name, role, created_at</code></td><td>Yes (<code>id</code> is the primary key)</td><td>Yes</td></tr>
+      <tr><td><code>certifications</code></td><td><code>id &rarr; stakeholder_id, certifying_body, issue_date, expiry_date, is_active</code></td><td>Yes</td><td>Yes</td></tr>
+      <tr><td><code>batches</code></td><td><code>id &rarr; product_name, quantity, unit, current_owner_id, created_at</code></td><td>Yes</td><td>Yes</td></tr>
+      <tr><td><code>batch_relations</code></td><td>None (all attributes form the key)</td><td>Trivially yes</td><td>Yes</td></tr>
+      <tr><td><code>audit_log</code></td><td><code>id &rarr; batch_id, action, actor_id, timestamp</code></td><td>Yes</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Every functional dependency in the final schema has the primary key on its left side, so the design is in BCNF. This eliminates update, insert, and delete anomalies: a certification can be revoked without touching any stakeholder row, a new batch can be added without duplicating owner information, and no lineage fact is recorded in more than one place.
+  </p>
+
+  <h3>4.4 Final Physical Schema</h3>
+  <div class="schema-block"><span class="kw">CREATE TABLE</span> stakeholders (
+    id          SERIAL PRIMARY KEY,
+    name        TEXT NOT NULL,
+    role        TEXT CHECK (role IN ('farmer','processor','distributor','retailer')),
+    created_at  TIMESTAMP DEFAULT NOW()
+);
+
+<span class="kw">CREATE TABLE</span> certifications (
+    id                SERIAL PRIMARY KEY,
+    stakeholder_id    INT REFERENCES stakeholders(id),
+    certifying_body   TEXT NOT NULL,
+    issue_date        DATE NOT NULL,
+    expiry_date       DATE NOT NULL,
+    is_active         BOOLEAN DEFAULT TRUE
+);
+
+<span class="kw">CREATE TABLE</span> batches (
+    id                SERIAL PRIMARY KEY,
+    product_name      TEXT NOT NULL,
+    quantity          INT  NOT NULL CHECK (quantity &gt; 0),
+    unit              TEXT DEFAULT 'kg',
+    current_owner_id  INT REFERENCES stakeholders(id),
+    created_at        TIMESTAMP DEFAULT NOW()
+);
+
+<span class="kw">CREATE TABLE</span> batch_relations (
+    parent_batch_id  INT REFERENCES batches(id),
+    child_batch_id   INT REFERENCES batches(id),
+    PRIMARY KEY (parent_batch_id, child_batch_id)
+);
+
+<span class="kw">CREATE TABLE</span> audit_log (
+    id         SERIAL PRIMARY KEY,
+    batch_id   INT REFERENCES batches(id),
+    action     TEXT,
+    actor_id   INT REFERENCES stakeholders(id),
+    timestamp  TIMESTAMP DEFAULT NOW()
+);</div>
+</section>
+
+<section id="er">
+  <h2>5. Entity-Relationship Diagram</h2>
+  <p>
+    The ER diagram below was generated directly from the live PostgreSQL catalog using a Python script that introspects <code>information_schema</code>. This guarantees that the diagram reflects exactly what has been created in the database, rather than being a drifted hand drawn sketch.
+  </p>
+  <div class="figure">
+    <img src="screenshots/er_diagram.png" alt="Entity-Relationship diagram">
+    <div class="caption"><strong>Figure 1.</strong> Entity-Relationship diagram of the Fair Trade Supply Chain Tracker. Key icons mark primary keys and link icons mark foreign keys.</div>
+  </div>
+
+  <h3>5.1 Cardinalities</h3>
+  <ul class="cardinality-list">
+    <li><code>stakeholders (1)</code> to <code>(0..1) certifications</code>. A stakeholder may optionally hold a certification, and each certification belongs to exactly one stakeholder. The optionality is important because it makes it possible to model an uncertified stakeholder like our seed data id 17.</li>
+    <li><code>stakeholders (1)</code> to <code>(0..N) batches</code>. A stakeholder can currently own many batches, while each batch has one current owner.</li>
+    <li><code>stakeholders (1)</code> to <code>(0..N) audit_log</code>. A stakeholder can be the actor on many audit entries, while every audit entry names exactly one actor.</li>
+    <li><code>batches (M)</code> to <code>(N) batches</code>, resolved through <code>batch_relations</code>. A batch can have many parents and many children. This many to many self relationship is what lets the schema model splits and merges inside processing stages.</li>
+    <li><code>batches (1)</code> to <code>(0..N) audit_log</code>. Each batch can have many audit entries attached over its lifetime, and every audit entry belongs to exactly one batch.</li>
+  </ul>
+
+  <h3>5.2 Why the DAG Matters</h3>
+  <p>
+    Modelling <code>batch_relations</code> as a separate junction table rather than as a self referencing foreign key on <code>batches</code> is a deliberate design choice. A self referencing column would have forced every batch to have at most one parent, which would rule out merges. The junction table lets two parent batches (for example, Cocoa Raw A and Cocoa Raw B) be combined at a processor into a single child batch, which is a routine event in real supply chains. The trade off is that lineage queries must be expressed recursively across the junction table, which is handled by the recursive CTEs in the stored functions.
+  </p>
+</section>
+
+<section id="application">
+  <h2>6. Application Explanation with Screenshots</h2>
+  <p>
+    This section walks through the application in action. Every figure shown below was captured from the live HTML run report produced by <code>generate_report.py</code>, which connects to the populated database, runs each scenario end to end, and renders the results. The figures are organised by subsystem.
+  </p>
+
+  <h3>6.1 Schema Overview</h3>
+  <p>
+    The first screen of the run report enumerates every object created by <code>setup/setup.sql</code>. The installation builds five base tables, five triggers, six views, and four non trigger stored functions. The trigger bodies (<code>check_certification</code>, <code>log_batch_insert</code>, and so on) are hidden from the function list because they are not meant to be called directly.
+  </p>
+  <div class="figure">
+    <img src="screenshots/01.1.png" alt="Schema overview: tables and triggers">
+    <div class="caption"><strong>Figure 2.</strong> Base tables and triggers installed by the bootstrap script. Five triggers enforce certification checks on INSERT and UPDATE, log every batch event, and lock the audit log against tampering.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/01.2.png" alt="Schema overview: views and stored functions">
+    <div class="caption"><strong>Figure 3.</strong> Views and non trigger stored functions. <code>v_compliance_overview</code> and <code>get_compliance_report()</code> deliberately share a result shape so they are interchangeable.</div>
+  </div>
+
+  <h3>6.2 Stakeholders and Certifications</h3>
+  <p>
+    The database is populated with eighteen stakeholders spread across three supply chains (coffee, cocoa, and cotton) plus three edge case stakeholders that are essential for exercising every branch of the compliance logic: id 16 holds an expired certification, id 17 holds no certification at all, and id 18 holds a revoked certification. Keeping the certification attributes in a separate table is what makes this possible, because the stakeholder row is identical for all three edge cases and only the certification row differs.
+  </p>
+  <div class="figure">
+    <img src="screenshots/02.1.png" alt="All stakeholders">
+    <div class="caption"><strong>Figure 4.</strong> All eighteen stakeholders with their roles and creation timestamps.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/02.2.png" alt="Stakeholders joined with certifications">
+    <div class="caption"><strong>Figure 5.</strong> Stakeholders joined with their certification rows. The LEFT JOIN preserves id 17, whose certification fields are all NULL; the 2020 expiry on id 16 and the <code>is_active = False</code> on id 18 are clearly visible.</div>
+  </div>
+
+  <h3>6.3 Batches and the Supply Chain DAG</h3>
+  <p>
+    Twenty four batches span the three chains. Each batch records its product name, quantity, unit, and the stakeholder currently in custody of it. The <code>batch_relations</code> table captures how each batch was produced from its parents, forming the directed acyclic graph that drives all lineage queries.
+  </p>
+  <div class="figure">
+    <img src="screenshots/03.png" alt="All product batches">
+    <div class="caption"><strong>Figure 6.</strong> All twenty four product batches across the coffee (100 to 107), cocoa (200 to 207), and cotton (300 to 307) chains.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/04.png" alt="Batch relations">
+    <div class="caption"><strong>Figure 7.</strong> Parent to child relationships. Each row is one directed edge in the supply chain DAG; merges are visible where two different parents flow into the same child.</div>
+  </div>
+
+  <h3>6.4 Recursive Lineage Queries</h3>
+  <p>
+    The core value of the database lies in its lineage queries. Given any batch, the backward trace walks through every ancestor up to the raw material origin, and the forward trace walks through every descendant to the final retail product. Both are implemented with a PostgreSQL recursive CTE that joins <code>batch_relations</code> back onto itself.
+  </p>
+  <div class="figure">
+    <img src="screenshots/05.png" alt="Backward lineage from Coffee Retail 1">
+    <div class="caption"><strong>Figure 8.</strong> Backward lineage starting at Coffee Retail 1 (batch 106). The recursive CTE walks back through distributor, processor, and the two farm level raw batches. The depth column shows distance from the target batch.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/06.png" alt="Forward trace from Cocoa Raw A">
+    <div class="caption"><strong>Figure 9.</strong> Forward trace starting at Cocoa Raw A (batch 200). Every downstream product that carries material from this raw batch is returned. This is the query a quality manager would run during a product recall.</div>
+  </div>
+
+  <h3>6.5 Trigger Enforcement</h3>
+  <p>
+    Four separate scenarios verify that the two certification triggers reject every non-compliant action. In each case the database returns an error and the row is never written. The application client cannot bypass these checks because they execute inside the database engine.
+  </p>
+  <div class="figure">
+    <img src="screenshots/07,08.png" alt="Triggers blocking uncertified and expired stakeholders">
+    <div class="caption"><strong>Figure 10.</strong> Top: attempt to insert a batch for stakeholder 17 (no certification on file). Bottom: attempt for stakeholder 16, whose certification expired on 2020-01-01. Both inserts are rejected by <code>check_certification()</code>.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/09,10.png" alt="Triggers blocking revoked certification and transfer to uncertified owner">
+    <div class="caption"><strong>Figure 11.</strong> Top: attempt to insert a batch for stakeholder 18, whose certification has <code>is_active = FALSE</code>. Bottom: attempt to transfer an existing batch to uncertified stakeholder 17; the second trigger <code>check_transfer_certification()</code> fires on UPDATE of <code>current_owner_id</code> and blocks the move.</div>
+  </div>
+
+  <h3>6.6 Transfer and Audit Logging</h3>
+  <p>
+    A successful transfer is performed through the <code>transfer_batch(batch_id, new_owner_id)</code> stored function. The function updates the ownership column, the transfer trigger validates the receiving stakeholder, and the audit trigger records the event automatically. The audit log then becomes the canonical record of who held the batch and when.
+  </p>
+  <div class="figure">
+    <img src="screenshots/11.png" alt="Successful batch transfer with automatic audit logging">
+    <div class="caption"><strong>Figure 12.</strong> Batch 106 is transferred from City Coffee Retail back to Global Coffee Distributors. The before and after states are shown alongside the audit trail, which now contains a new row of action <code>transferred</code> written by the trigger with no application assistance.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/12.png" alt="Audit log immutability">
+    <div class="caption"><strong>Figure 13.</strong> Audit log immutability in action. Both UPDATE and DELETE against <code>audit_log</code> are rejected by <code>prevent_audit_modification()</code>, guaranteeing an append only history.</div>
+  </div>
+
+  <h3>6.7 Views</h3>
+  <p>
+    The database exposes six views that pre-compose common queries. Three of the most important are shown below: the full compliance overview, the per chain summary, and the final products and raw materials views used for recall and provenance queries respectively.
+  </p>
+  <div class="figure">
+    <img src="screenshots/13.png" alt="Compliance overview view">
+    <div class="caption"><strong>Figure 14.</strong> <code>v_compliance_overview</code> classifies every stakeholder into one of four states. Thanks to the edge case seed data, all four CASE branches are reached: COMPLIANT (rows 1 to 15), EXPIRED (row 16), NO CERTIFICATION (row 17), and REVOKED (row 18).</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/14.png" alt="Supply chain summary view">
+    <div class="caption"><strong>Figure 15.</strong> <code>v_supply_chain_summary</code> aggregates per chain: eight batches, five stakeholders, and a total quantity that reflects the in-transit material in each of the three chains.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/15.png" alt="Final products and raw materials views">
+    <div class="caption"><strong>Figure 16.</strong> <code>v_final_products</code> (top) lists the leaf batches that have no downstream children, and <code>v_raw_materials</code> (bottom) lists the root batches that have no upstream parents. Together they bound the DAG.</div>
+  </div>
+
+  <h3>6.8 Stored Functions</h3>
+  <p>
+    The three reusable lineage and compliance functions let client applications call a single routine instead of rewriting the recursive CTEs each time.
+  </p>
+  <div class="figure">
+    <img src="screenshots/16.png" alt="get_backward_lineage(207)">
+    <div class="caption"><strong>Figure 17.</strong> <code>get_backward_lineage(207)</code> wraps the recursive CTE used in Figure 8 into a callable function. Here it traces Chocolate Batch 2 back to both cocoa farm origins.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/17,18.png" alt="get_forward_trace and get_compliance_report">
+    <div class="caption"><strong>Figure 18.</strong> Top: <code>get_forward_trace(300)</code> traces Cotton Raw A forward to every downstream fabric and clothing product. Bottom: <code>get_compliance_report()</code> returns the same result set as <code>v_compliance_overview</code>, confirming that the view and the function are interchangeable.</div>
+  </div>
+
+  <h3>6.9 Analytical Queries</h3>
+  <p>
+    Aggregate queries exercise GROUP BY, HAVING, and a second independent recursive CTE that computes the maximum depth of each chain from its root. These demonstrate that the schema supports realistic analytical workloads in addition to the lineage queries.
+  </p>
+  <div class="figure">
+    <img src="screenshots/19.1.png" alt="Analytical queries part 1">
+    <div class="caption"><strong>Figure 19.</strong> Total quantity per supply chain stage and the branching factor per batch. The branching factor view highlights which batches split into the largest number of children, which is useful for risk analysis.</div>
+  </div>
+  <div class="figure">
+    <img src="screenshots/19.2.png" alt="Analytical queries part 2">
+    <div class="caption"><strong>Figure 20.</strong> Supply chain depth per root batch and a summary of audit actions. Every chain has a maximum depth of three, consistent with the farmer, processor, distributor, and retailer stages.</div>
+  </div>
+
+  <h3>6.10 Supply Chain Visualisation</h3>
+  <p>
+    The final visualisation is generated by <code>visualise/visualise_db.py</code>, which reads the current state of the database and emits a Graphviz rendering of the entire DAG. Node colours follow stakeholder role, making the four supply chain stages visually distinct.
+  </p>
+  <div class="figure">
+    <img src="screenshots/supply_chain_graph.png" alt="Rendered supply chain DAG">
+    <div class="caption"><strong>Figure 21.</strong> The complete supply chain graph produced from live data. Green nodes are farmer owned raw batches, blue are processor batches, orange are distributor export batches, and pink are retail ready final products. The three visually separate subgraphs are the coffee, cocoa, and cotton chains, each branching and merging through the processing stages.</div>
+  </div>
+
+  <h3>6.11 Summary of Results</h3>
+  <p>
+    All functional objectives defined in Section 2 have been met. The triggers block every non-compliant insert and every non-compliant transfer; the audit log is strictly append only; the recursive functions correctly return the ancestors and descendants for every tested batch; the compliance view returns all four categorical states; and the Python reporting layer produces a complete run report together with the live ER diagram and the supply chain DAG. The schema is in BCNF, which removes update, insert, and delete anomalies from the design.
+  </p>
+</section>
+
+<footer>
+  <p>Fair Trade Supply Chain Tracker &nbsp;·&nbsp; CS251M Database Systems Project &nbsp;·&nbsp; April 2026</p>
+  <p>Rushil Jain (241EC148) &nbsp;·&nbsp; Shresh Parti (241EC252)</p>
+</footer>
+
+</body>
+</html>
